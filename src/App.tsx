@@ -1,24 +1,21 @@
 import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import Navbar from './components/Navbar';
+import Dashboard from './components/Dashboard';
+import Keyboard from './components/Keyboard';
 
 function App() {
+  const onKeyPress = (key: string) => {
+    console.log(key);
+    
+  };
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div className="w-full h-screen flex justify-center items-center pb-5 text-3xl">
+      <div className='w-6/12 flex flex-col'>
+        <Navbar />
+        <Dashboard />
+        <Keyboard onKeyPressed={onKeyPress} />
+      </div>
     </div>
   );
 }
