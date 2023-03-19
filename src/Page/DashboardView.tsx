@@ -1,12 +1,15 @@
-import { FC, useEffect, useState } from 'react';
+import { FC, KeyboardEventHandler, useEffect, useState } from 'react';
 /* Hooks */
 import { useDataFetch } from '../hooks/useDataFetch';
+import { useLocalstorage } from '../hooks/useLocalstorage';
+// import { useKeyboard } from '../hooks/useKeyboard';
 /* Views */
 import HelpView from './HelpView';
 /* Components */
 import Dashboard from '../components/Dashboard';
 import Keyboard from '../components/Keyboard';
 import Navbar from '../components/Navbar';
+import StatisticsView from './StatisticsView';
 
 const url = "https://gitlab.com/d2945/words/-/raw/main/words.txt";
 
@@ -17,14 +20,20 @@ interface JsonResponse {
 type States = 'idle' | 'playing' | 'completed' | 'failed';
 
 export const DashboardView: FC = () => {
+  /* Hooks */
   const { dictionary } = useDataFetch<JsonResponse>(url);
+  const { onboarding, setItemLocalstorage } = useLocalstorage();
+  /* States */
   const [selectedWord, setSelectedWord] = useState<string>('');
   const [currentWord, setCurrentWord] = useState<string>('');
   const [currentStateBox, setCurrentStateBox] = useState<States>('idle');
   const [rowActived, setRowActive] = useState<number>(0);
   const [openHelpModal, setOpenHelpModal] = useState<boolean>(false);
+  const [openStatisticsModal, setOpenStatisticsModal] = useState<boolean>(false);
 
   const onKeyPress = (key: string) => {
+    console.log('teclado', key);
+    
     let newWord = currentWord;
 
     if (key === 'Enter') {
@@ -62,6 +71,16 @@ export const DashboardView: FC = () => {
     setCurrentWord(newWord.concat(key));
   };
 
+  const onKeyPressReal = (event: any) => {
+    console.log(event, event);
+    
+    if (event.target && event.target.keyCode) {
+      onKeyPress(event.target.keyCode);
+    }
+  };
+
+  /* useKeyboard("keydown", onKeyPressReal); */
+
   const getRandomWord = () => {
     const randomIndex = Math.floor(Math.random() * dictionary.length);
     const randomWord = dictionary[randomIndex];
@@ -70,15 +89,26 @@ export const DashboardView: FC = () => {
   };
 
   const setWord = (word: string) => {
-    console.log('word', word.toLocaleLowerCase());
     setSelectedWord(word.toLocaleLowerCase());
   };
 
-  const setOpenHelp = (open: boolean) => {
-    console.log('open', open);
-    
+  const setOpenHelp = (open: boolean) => {    
     setOpenHelpModal(open);
+
+    if (!open && onboarding) {
+      setItemLocalstorage();
+    }
   };
+
+  const setOpenStatistics = (open: boolean) => {
+    setOpenStatisticsModal(open);
+  };
+
+  useEffect(() => {
+    if (onboarding) {
+      setOpenHelpModal(true);
+    }
+  }, [onboarding])
 
   useEffect(() => {
     if (dictionary?.length) {
@@ -95,8 +125,13 @@ export const DashboardView: FC = () => {
           <HelpView onClickHelp={setOpenHelp} />
         )
       }
+      {
+        openStatisticsModal && (
+          <StatisticsView setOpenStatistics={setOpenStatistics} />
+        )
+      }
       <div className='w-6/12 flex flex-col'>
-        <Navbar onClickHelp={setOpenHelp} />
+        <Navbar onClickHelp={setOpenHelp} setOpenStatistics={setOpenStatistics} />
         <Dashboard
           currentLetter={currentWord}
           currentRow={rowActived}

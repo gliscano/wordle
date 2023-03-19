@@ -6,6 +6,7 @@ export const useDataFetch = <T> (url: string) => {
   const [dictionary, setDictionary] = useState<string[]>([]);
   const [error, setError] = useState<T>();
   const cancelRequest = useRef<boolean>(false);
+  let isFetching = false;
 
   /**
    * It takes a string of words separated by new lines, and returns an array of words that are 5
@@ -23,10 +24,14 @@ export const useDataFetch = <T> (url: string) => {
   useEffect(() => {
     cancelRequest.current = false;
 
+    if (isFetching) { return; }
+
     const headers = new Headers({
       'Content-Type': 'text/plain',
       'Accept': 'text/html',
     });
+
+    isFetching = true;
 
     fetch(url, {
       method: 'GET',
@@ -44,11 +49,16 @@ export const useDataFetch = <T> (url: string) => {
         }
       })
       .catch((error) => {
-        console.error(error.message);
+        console.info('Error getting data from Gitlab');
+        console.info('================================');
+        console.info('>>> Getting data from local backup');
+        console.info('================================');
+        
         setError(error.message);
-
-        console.log('>>>>>>>>>>>>>>>>>>>>>');
         setDictionary(catalogData);
+      })
+      .finally(() => {
+        isFetching = false;
       });
 
     return () => {
