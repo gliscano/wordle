@@ -1,9 +1,24 @@
-# Getting Started with Create React App
+# Wordle
+El Juego consiste en seleccionar aleatoriamente una palabra de 5 letras del catálogo de palabras. Al teclear o al dar click en una letra del teclado virtual, la letra se mostrará en la
+primera caja que se encuentre vacía y así sucesivamente. Al completar una fila de 5 letras, la aplicación compará cada letra de palabra formada con la palabra seleccionada y se aplicará la siguiente lógica:
+- a. Si la letra ingresada está en el mismo lugar, la caja se pintara de verde.
+- b. Si la letra ingresada está en la palabra pero no en el mismo lugar, la caja se pintará de amarillo
+- c. Si la letra ingresada no se encuentra en la palabra, la caja se mostrar de color gris
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+## Observaciones generales del proyecto
+- El proyecto fue creado con React y Typescript
+- El framework de CSS usado fue Tailwind.
+- Para conocer información de las vistas, ir a src > page
+- Para conocer información de los componentes, ir a src > components
+- Para conocer información sobre service, localstorage y listeners, ir a src > hooks
+- En caso de blocks por CORS la aplicación selecciona la data desde un backup local, ir a src > dataBackup
+
+## Tareas pendientes
+- Actualizar la palabra cada 5 min.
+- Unit Tests.
+- Agregar i18n.
 
 ## Available Scripts
-
 In the project directory, you can run:
 
 ### `npm start`
@@ -14,11 +29,6 @@ Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
 The page will reload if you make edits.\
 You will also see any lint errors in the console.
 
-### `npm test`
-
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
-
 ### `npm run build`
 
 Builds the app for production to the `build` folder.\
@@ -28,16 +38,6 @@ The build is minified and the filenames include the hashes.\
 Your app is ready to be deployed!
 
 See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
-
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
-
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
 
 ## Learn More
 
