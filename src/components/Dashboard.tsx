@@ -29,8 +29,6 @@ const Dashboard: FC<Props> = ({ currentLetter, currentRow, currentStateBox, sele
     setCurrentWords(currentWordsNew);
   }, [currentLetter, currentRow]);
 
-  
-
   return (
     <div className='flex flex-col m-4 w100 items-center justify-center'>
       {

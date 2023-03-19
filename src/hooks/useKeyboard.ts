@@ -1,11 +1,27 @@
 import { useEffect } from "react";
 
-export function useKeyboard(eventName: keyof WindowEventMap, onKeyPressReal: any) {
+interface KeyDownProps {
+  eventName: string,
+  onKeyPress: (eventName: string) => void
+}
+
+export function useKeyboard ({eventName, onKeyPress}: KeyDownProps) {
+
+  const getKey = (event: KeyboardEvent | any) => {   
+    if (event.target && event.key) {
+      const { keyCode } = event;
+
+      if ((keyCode >= 65 && keyCode <= 90) || keyCode === 192 ||  keyCode === 8 || keyCode === 13) {
+        onKeyPress(event.key);
+      }
+    }
+  };
+
   useEffect(() => {
-    window.addEventListener(eventName, (event) => onKeyPressReal(event.target));
+    document.addEventListener(eventName, getKey);
 
     return () => {
-      window.removeEventListener(eventName, onKeyPressReal);
+      document.removeEventListener(eventName, getKey);
     };
   });
 }

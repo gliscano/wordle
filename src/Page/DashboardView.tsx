@@ -1,15 +1,15 @@
-import { FC, KeyboardEventHandler, useEffect, useState } from 'react';
+import { FC, useEffect, useState } from 'react';
 /* Hooks */
 import { useDataFetch } from '../hooks/useDataFetch';
 import { useLocalstorage } from '../hooks/useLocalstorage';
-// import { useKeyboard } from '../hooks/useKeyboard';
+import { useKeyboard } from '../hooks/useKeyboard';
 /* Views */
 import HelpView from './HelpView';
+import StatisticsView from './StatisticsView';
 /* Components */
 import Dashboard from '../components/Dashboard';
-import Keyboard from '../components/Keyboard';
 import Navbar from '../components/Navbar';
-import StatisticsView from './StatisticsView';
+import Keyboard from '../components/Keyboard';
 
 const url = "https://gitlab.com/d2945/words/-/raw/main/words.txt";
 
@@ -24,16 +24,44 @@ export const DashboardView: FC = () => {
   const { dictionary } = useDataFetch<JsonResponse>(url);
   const { onboarding, setItemLocalstorage } = useLocalstorage();
   /* States */
-  const [selectedWord, setSelectedWord] = useState<string>('');
-  const [currentWord, setCurrentWord] = useState<string>('');
   const [currentStateBox, setCurrentStateBox] = useState<States>('idle');
-  const [rowActived, setRowActive] = useState<number>(0);
+  const [currentWord, setCurrentWord] = useState<string>('');
   const [openHelpModal, setOpenHelpModal] = useState<boolean>(false);
   const [openStatisticsModal, setOpenStatisticsModal] = useState<boolean>(false);
+  const [rowActived, setRowActive] = useState<number>(0);
+  const [selectedWord, setSelectedWord] = useState<string>('');
+  const [totalPlays, setTotalPlays] = useState<number>(0);
+  const [totalWins, setTotalWins] = useState<number>(0);
+  /* Constants and Variables */
+  const eventName = "keydown";
+  let idTimeoutShowModal: NodeJS.Timeout | undefined = undefined;
+  // let idTimeoutUpdateWord: NodeJS.Timeout | undefined = undefined;
+   
+  const validateResult = () => {
+    const winner = currentWord === selectedWord;
+    let showModal = false;
 
-  const onKeyPress = (key: string) => {
-    console.log('teclado', key);
-    
+    if (winner) {
+      setTotalWins(totalPlays + 1);
+      showModal = true;      
+    } else if (rowActived >= 4) {
+      setTotalPlays(totalPlays + 1);
+      showModal = true;
+    }
+
+    if (showModal) {
+      idTimeoutShowModal = setTimeout(() => {
+        clearTimeout(idTimeoutShowModal);
+        idTimeoutShowModal = undefined;
+
+        setOpenStatistics(true);
+      }, 1000);
+    }
+
+    return ;
+  };
+
+  const onKeyPress = (key: string) => {  
     let newWord = currentWord;
 
     if (key === 'Enter') {
@@ -43,11 +71,12 @@ export const DashboardView: FC = () => {
       }
 
       setCurrentStateBox('completed');
+      validateResult();
       return;
     }
     
     if (key === 'Backspace') {
-      if (currentWord.length === 0) { return; }
+      if (currentWord.length === 0 || currentStateBox !== 'playing') { return; }
 
       const newWord = currentWord.slice(0, -1);
       setCurrentWord(newWord);
@@ -71,15 +100,7 @@ export const DashboardView: FC = () => {
     setCurrentWord(newWord.concat(key));
   };
 
-  const onKeyPressReal = (event: any) => {
-    console.log(event, event);
-    
-    if (event.target && event.target.keyCode) {
-      onKeyPress(event.target.keyCode);
-    }
-  };
-
-  /* useKeyboard("keydown", onKeyPressReal); */
+  useKeyboard({ eventName , onKeyPress });
 
   const getRandomWord = () => {
     const randomIndex = Math.floor(Math.random() * dictionary.length);
@@ -88,7 +109,7 @@ export const DashboardView: FC = () => {
     return randomWord;
   };
 
-  const setWord = (word: string) => {
+  const setWord = (word: string) => {   
     setSelectedWord(word.toLocaleLowerCase());
   };
 
@@ -127,10 +148,17 @@ export const DashboardView: FC = () => {
       }
       {
         openStatisticsModal && (
-          <StatisticsView setOpenStatistics={setOpenStatistics} />
+          <StatisticsView
+            setOpenStatistics={setOpenStatistics}
+            totalPlays={totalPlays}
+            totalWins={totalWins}
+            selectedWord={selectedWord}
+            currentStateBox={currentStateBox}
+            rowActived={rowActived}
+          />
         )
       }
-      <div className='w-6/12 flex flex-col'>
+      <div className='w-6/12 flex flex-col scale-up-center'>
         <Navbar onClickHelp={setOpenHelp} setOpenStatistics={setOpenStatistics} />
         <Dashboard
           currentLetter={currentWord}

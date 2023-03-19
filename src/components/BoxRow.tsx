@@ -53,7 +53,7 @@ const BoxRow: FC<Props> = ({ rowId, rowNumber, state, word, selectedWord }) => {
             id={`${rowId}-box-${index}`}
             key={`${rowNumber}-box-${index}`}
             text=""
-            color="bg-gray-30 scale-up-center"
+            color="bg-gray-30"
           />
         ))
       }
