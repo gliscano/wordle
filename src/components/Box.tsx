@@ -11,11 +11,11 @@ const Box:FC<Props> = ({ text, color, id }) => {
     <div
       id={id}
       key={id}
-      className='w-20 h-20 m-2.5
+      className={`w-16 h-16 m-2.5
         flex
         rounded-md
-        bg-gray-30
-        items-center justify-around'
+        ${color}
+        items-center justify-around`}
     >
       {text}
     </div>

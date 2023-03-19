@@ -1,22 +1,34 @@
 /* Hooks */
-import { FC } from 'react';
-import { useDataFetch } from '../hooks/useDataFetch';
+import { FC, useState, useEffect } from 'react';
 /* Components */
 import BoxRow from './BoxRow';
 
-const url = "https://gitlab.com/d2945/words/-/raw/main/words.txt";
-
-interface JsonResponse {
-  data: Array<string>
+interface Props {
+  currentLetter: string;
+  currentRow: number;
+  currentStateBox: string;
+  selectedWord: string;
 }
 
-const Dashboard: FC = () => {
-  const totalRows: Array<number> = new Array(5).fill(0);
-  const [dictionary, error] = useDataFetch<JsonResponse>(url);
+const Dashboard: FC<Props> = ({ currentLetter, currentRow, currentStateBox, selectedWord }) => {
+  const totalRows: Array<number> = new Array(5).fill(0);  
+  const [currentWords, setCurrentWords] = useState<string[]>(new Array(5).fill(''));
+  const [stateBoxes, setStateBoxes] = useState<string[]>(new Array(5).fill('idle'));
 
-  console.log('dashboard dictionary', dictionary);
-  console.log('error', error);
-  
+  useEffect(() => {
+    const stateBoxesNew = [...stateBoxes];
+    stateBoxesNew[currentRow] = currentStateBox;
+    
+    setStateBoxes(stateBoxesNew);
+  }, [currentStateBox]);
+
+  useEffect(() => {
+    const currentWordsNew = [...currentWords];
+    currentWordsNew[currentRow] = currentLetter.toLocaleLowerCase();
+
+    setCurrentWords(currentWordsNew);
+  }, [currentLetter, currentRow]);
+
   
 
   return (
@@ -26,8 +38,9 @@ const Dashboard: FC = () => {
           <BoxRow
             rowId={`row-${index}`}
             key={`row-${index}`}
-            word=''
-            status='empty'
+            selectedWord={selectedWord}
+            word={currentWords[index]}
+            state={stateBoxes[index]}
             rowNumber={index}
           />
         ))

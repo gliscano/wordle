@@ -1,8 +1,9 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react';
+import { catalogData } from '../dataBackup/data'
 
 export const useDataFetch = <T> (url: string) => {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [dictionary, setDictionary] = useState<string[]>();
+  const [dictionary, setDictionary] = useState<string[]>([]);
   const [error, setError] = useState<T>();
   const cancelRequest = useRef<boolean>(false);
 
@@ -34,25 +35,29 @@ export const useDataFetch = <T> (url: string) => {
     })
       .then((response) => response.text())
       .then((result) => {
-        if (cancelRequest.current) { return }
+        if (cancelRequest.current || dictionary.length) { return }
 
         if (typeof result !== 'undefined') {
           const dataParsed:string[] = getValidWords(result);
+
           setDictionary(dataParsed);
         }
       })
       .catch((error) => {
         console.error(error.message);
-        setError(error.message);        
+        setError(error.message);
+
+        console.log('>>>>>>>>>>>>>>>>>>>>>');
+        setDictionary(catalogData);
       });
 
     return () => {
       cancelRequest.current = true
     }
-  }, [url, ]);
+  }, []);
 
-  return [
+  return {
     dictionary,
     error,
-  ];
+  };
 }

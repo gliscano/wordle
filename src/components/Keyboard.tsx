@@ -2,26 +2,28 @@ interface Prop {
   onKeyPressed: (key: string) => void
 }
 
-interface Event {
-  e: React.KeyboardEvent<HTMLElement>
-}
-
-const Keyboard = (onKeyPressed: Prop) => {
+const Keyboard = ({ onKeyPressed }: Prop) => {
   const firstLineKeys = ["Q", "W", "E", "R", "T", "Y", "U", "I", "O", "P"];
   const secondLineKeys = ["A", "S", "D", "F", "G", "H", "J", "K", "L", "Ñ"];
   const thirdLineKeys = ["Z", "X", "C", "V", "B", "N", "M"];
   const keyStyle = "w-10 h-10 m-1 bg-gray-light text-lg rounded";
 
-  const handleInput = (e: Event) => {
-    // onKeyPressed(e.target.textContent);
+  const handleInput = (event: any) => {
+    event.preventDefault();
+
+    onKeyPressed(event.target.textContent);   
   };
 
-  const handleEnter = (e: Event) => {
-    // onKeyPressed("ENTER");
+  const handleEnter = (event: React.MouseEvent<HTMLButtonElement>) => {
+    event.preventDefault();
+
+    onKeyPressed("Enter");
   }
 
-  const handleDelete = (e: Event) => {
-    // onKeyPressed("BACKSPACE");
+  const handleDelete = (event: React.MouseEvent<HTMLButtonElement>) => {
+    event.preventDefault();
+
+    onKeyPressed("Backspace");
   }
 
   return (
@@ -31,7 +33,7 @@ const Keyboard = (onKeyPressed: Prop) => {
           firstLineKeys.map((key, i) => (
             <button
               key={key}
-              onClick={() => handleInput}
+              onClick={handleInput}
               className={keyStyle}
             >
               {key}
@@ -44,7 +46,7 @@ const Keyboard = (onKeyPressed: Prop) => {
           secondLineKeys.map((key, i) => (
             <button
               key={key}
-              onClick={() => handleInput}
+              onClick={handleInput}
               className={keyStyle}
             >
               {key}
@@ -54,7 +56,7 @@ const Keyboard = (onKeyPressed: Prop) => {
       </div>
       <div className="flex justify-center">
         <button
-          onClick={() => handleEnter}
+          onClick={handleEnter}
           className={`w-max px-2 ${keyStyle}`}
         >
           ENTER
@@ -63,7 +65,7 @@ const Keyboard = (onKeyPressed: Prop) => {
           thirdLineKeys.map((key, i) => (
             <button
               key={key}
-              onClick={() => handleInput}
+              onClick={handleInput}
               className={keyStyle}
             >
               {key}
@@ -71,7 +73,7 @@ const Keyboard = (onKeyPressed: Prop) => {
           ))
         }
         <button
-          onClick={() => handleDelete}
+          onClick={handleDelete}
           className={`w-max px-4 mr-12 ${keyStyle}`}
         >
           <svg width="23" height="17" viewBox="0 0 23 17" fill="none" xmlns="http://www.w3.org/2000/svg">
