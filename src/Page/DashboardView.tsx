@@ -1,6 +1,8 @@
 import { FC, useEffect, useState } from 'react';
 /* Hooks */
 import { useDataFetch } from '../hooks/useDataFetch';
+/* Views */
+import HelpView from './HelpView';
 /* Components */
 import Dashboard from '../components/Dashboard';
 import Keyboard from '../components/Keyboard';
@@ -20,6 +22,7 @@ export const DashboardView: FC = () => {
   const [currentWord, setCurrentWord] = useState<string>('');
   const [currentStateBox, setCurrentStateBox] = useState<States>('idle');
   const [rowActived, setRowActive] = useState<number>(0);
+  const [openHelpModal, setOpenHelpModal] = useState<boolean>(false);
 
   const onKeyPress = (key: string) => {
     let newWord = currentWord;
@@ -71,6 +74,12 @@ export const DashboardView: FC = () => {
     setSelectedWord(word.toLocaleLowerCase());
   };
 
+  const setOpenHelp = (open: boolean) => {
+    console.log('open', open);
+    
+    setOpenHelpModal(open);
+  };
+
   useEffect(() => {
     if (dictionary?.length) {
       const word = getRandomWord();
@@ -80,9 +89,14 @@ export const DashboardView: FC = () => {
   }, [dictionary]);
 
   return (
-    <div className="w-full h-screen flex justify-center items-center pb-5 text-3xl">
+    <div className="w-full h-screen flex justify-center items-center text-3xl bg-white shadow-xl">
+      {
+        openHelpModal && (
+          <HelpView onClickHelp={setOpenHelp} />
+        )
+      }
       <div className='w-6/12 flex flex-col'>
-        <Navbar />
+        <Navbar onClickHelp={setOpenHelp} />
         <Dashboard
           currentLetter={currentWord}
           currentRow={rowActived}

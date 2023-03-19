@@ -1,7 +1,11 @@
 import { language_ES as lang } from "../language/language_ES";
 import Box from "../components/Box";
 
-const HelpView = () => {
+interface Prop {
+  onClickHelp: (key: boolean) => void
+}
+
+const HelpView = ({onClickHelp}: Prop) => {
   const example_1 = {
     word: 'GATOS',
     position: 0,
@@ -20,9 +24,20 @@ const HelpView = () => {
     color: "bg-gray-30"
   };
 
+  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    event.preventDefault();
+
+    onClickHelp(false);
+  }
+
   return (
-    <div className="w-full h-screen flex justify-center items-center pb-5 text-lg z-10 absolute">
-      <div className='w-6/12 h-full flex flex-col justify-center px-10 bg-gray-10 shadow-xl'>
+    <div className="w-full h-screen flex justify-center items-center py-4 text-lg z-10 absolute scale-up-center">
+      <div className='w-6/12 h-full
+        flex flex-col justify-center
+        px-10
+        rounded-2xl border border-gray-300
+        bg-gray-10 shadow-xl'
+      >
         <div className="text-3xl font-bold text-center mb-8">{lang.help_title}</div>
         <div className="mb-4">{lang.paragraph_1}</div>
         <div className="mb-4">{lang.paragraph_2}</div>
@@ -69,7 +84,15 @@ const HelpView = () => {
         <div className="mb-8">{lang.example_3}</div>
         <div className="mb-8">{lang.paragraph_4}</div>
         <div className="mb-8">{lang.footer}</div>
-        <div className="flex justify-around bg-green rounded-lg w-max py-2 px-8">{lang.btn_play}</div>
+        <div className="w-full flex justify-center font-center">
+          <button
+            key="btn-help-play"
+            onClick={handleClick}
+            className="flex bg-green rounded-lg py-2 px-12 mb-2 font-bold text-white"
+          >
+            {lang.btn_play}
+          </button>
+        </div>
       </div>
     </div>
   )

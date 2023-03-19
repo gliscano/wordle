@@ -19,7 +19,7 @@ module.exports = {
     },
     colors: {
       'transparent': 'transparent',
-      'white': '#ffffff',
+      'white': '#F9F9F9',
       'yellow': '#CEB02C',
       'green': '#66A060',
       'gray-light': '#D3D6DA',
