@@ -1,6 +1,7 @@
 export const language_ES:{ [key: string]: string; } = {
   btn_accept: 'Aceptar',
   btn_play: '¡JUGAR!',
+  btn_play_again: '¡JUGAR OTRA VEZ!',
   example_1: 'La letra G está en la palabra y en la posición correcta.',
   example_2: 'La letra C está en la palabra pero en la posición incorrecta.',
   example_3: 'La letra O no está en la palabra.',

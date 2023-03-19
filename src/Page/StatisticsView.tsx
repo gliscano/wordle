@@ -4,17 +4,27 @@ interface Prop {
   currentStateBox: string;
   selectedWord: string;
   rowActived: number;
+  timeToUpdateText: string;
   totalPlays: number;
   totalWins: number;
   setOpenStatistics: (key: boolean) => void;
 }
 
-const StatisticsView = ({ currentStateBox, totalPlays, totalWins, selectedWord, rowActived, setOpenStatistics }: Prop) => {
+const StatisticsView = ({
+  currentStateBox,
+  timeToUpdateText,
+  totalPlays,
+  totalWins,
+  selectedWord,
+  rowActived,
+  setOpenStatistics,
+}: Prop) => {
+
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
 
     setOpenStatistics(false);
-  }
+  };
 
   return (
     <div className="w-full h-screen flex justify-center items-center py-4 text-lg z-10 absolute scale-up-center">
@@ -36,23 +46,36 @@ const StatisticsView = ({ currentStateBox, totalPlays, totalWins, selectedWord, 
           </div>
         </div>
         { (currentStateBox === 'completed' && rowActived >= 4) && (
-            <div className="flex flex-col items-center mb-2">
+            <div className="flex flex-col items-center mb-2 font-bold text-green text-2xl">
               { selectedWord.toLocaleUpperCase() }
             </div>
           )
         }
         <div className="flex flex-col items-center mb-8">
           <div className="mb-4">{lang.next_word}</div>
-          <div className="font-bold">04:10</div>
+          <div className="font-bold">{timeToUpdateText}</div>
         </div>
         <div className="w-full flex justify-center font-center">
-          <button
-            key="btn-help-play"
-            onClick={handleClick}
-            className="flex bg-green rounded-lg py-2 px-12 mb-2 font-bold text-white"
-          >
-            {lang.btn_accept}
-          </button>
+          { (currentStateBox !== 'completed') && (
+              <button
+                key="btn-help-play"
+                onClick={handleClick}
+                className="flex bg-green rounded-lg py-2 px-12 mb-2 font-bold text-white"
+              >
+                {lang.btn_accept}
+              </button>
+            )
+          }
+          { (currentStateBox === 'completed' && rowActived >= 4) && (
+            <button
+              key="btn-help-play"
+              onClick={() => window.location.reload()}
+              className="flex bg-green rounded-lg py-2 px-12 mb-2 font-bold text-white"
+            >
+              {lang.btn_play_again}
+            </button>
+          )
+        }
         </div>
       </div>
     </div>

@@ -2,7 +2,6 @@ import { useEffect, useRef, useState } from 'react';
 import { catalogData } from '../dataBackup/data'
 
 export const useDataFetch = <T> (url: string) => {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [dictionary, setDictionary] = useState<string[]>([]);
   const [error, setError] = useState<T>();
   const cancelRequest = useRef<boolean>(false);

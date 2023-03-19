@@ -14,9 +14,9 @@ primera caja que se encuentre vacía y así sucesivamente. Al completar una fila
 - En caso de blocks por CORS la aplicación selecciona la data desde un backup local, ir a src > dataBackup
 
 ## Tareas pendientes
-- Actualizar la palabra cada 5 min.
 - Unit Tests.
 - Agregar i18n.
+- Mejorar el reset de la vistas y estados de los componentes.
 
 ## Available Scripts
 In the project directory, you can run:

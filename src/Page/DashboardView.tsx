@@ -1,4 +1,4 @@
-import { FC, useEffect, useState } from 'react';
+import { FC, useEffect, useRef, useState } from 'react';
 /* Hooks */
 import { useDataFetch } from '../hooks/useDataFetch';
 import { useLocalstorage } from '../hooks/useLocalstorage';
@@ -23,6 +23,8 @@ export const DashboardView: FC = () => {
   /* Hooks */
   const { dictionary } = useDataFetch<JsonResponse>(url);
   const { onboarding, setItemLocalstorage } = useLocalstorage();
+  const idTimeoutShowModal = useRef<NodeJS.Timeout | null>(null);
+  const idTimeoutUpdateWord = useRef<NodeJS.Timeout | null>(null);
   /* States */
   const [currentStateBox, setCurrentStateBox] = useState<States>('idle');
   const [currentWord, setCurrentWord] = useState<string>('');
@@ -30,12 +32,12 @@ export const DashboardView: FC = () => {
   const [openStatisticsModal, setOpenStatisticsModal] = useState<boolean>(false);
   const [rowActived, setRowActive] = useState<number>(0);
   const [selectedWord, setSelectedWord] = useState<string>('');
+  const [timerToUpdateWord, setTimerToUpdate] = useState<number>(300);
+  const [timeToUpdateText, setTimeToUpdateText] = useState<string>('00:00');
   const [totalPlays, setTotalPlays] = useState<number>(0);
   const [totalWins, setTotalWins] = useState<number>(0);
-  /* Constants and Variables */
+  /* Constants */
   const eventName = "keydown";
-  let idTimeoutShowModal: NodeJS.Timeout | undefined = undefined;
-  // let idTimeoutUpdateWord: NodeJS.Timeout | undefined = undefined;
    
   const validateResult = () => {
     const winner = currentWord === selectedWord;
@@ -50,9 +52,8 @@ export const DashboardView: FC = () => {
     }
 
     if (showModal) {
-      idTimeoutShowModal = setTimeout(() => {
-        clearTimeout(idTimeoutShowModal);
-        idTimeoutShowModal = undefined;
+      idTimeoutShowModal.current = setTimeout(() => {
+        clearTimeout(idTimeoutShowModal.current!);
 
         setOpenStatistics(true);
       }, 1000);
@@ -61,6 +62,12 @@ export const DashboardView: FC = () => {
     return ;
   };
 
+  /**
+   * If the user presses the enter key, check if the word is valid. If it is, set the state to
+   * completed. If it isn't, set the state to failed. If the user presses the backspace key, remove the
+   * last letter from the word. If the user presses any other key, add it to the word
+   * @param {string} key - string - The key that was pressed.
+   */
   const onKeyPress = (key: string) => {  
     let newWord = currentWord;
 
@@ -125,6 +132,21 @@ export const DashboardView: FC = () => {
     setOpenStatisticsModal(open);
   };
 
+  const startTimerToUpdateWord = () => {  
+    idTimeoutUpdateWord.current = setTimeout(() => {
+      setTimerToUpdate(prevCount => prevCount - 1);
+      
+      if (timerToUpdateWord <= 0) {
+        clearTimeout(idTimeoutUpdateWord.current!);
+
+        /* Reload page is a workaround by time,
+          best way, create reset view function and clear all states */
+        window.location.reload();
+        return;
+      }
+    }, 1000);    
+  };
+
   useEffect(() => {
     if (onboarding) {
       setOpenHelpModal(true);
@@ -134,10 +156,25 @@ export const DashboardView: FC = () => {
   useEffect(() => {
     if (dictionary?.length) {
       const word = getRandomWord();
-      
       setWord(word);
+
+      startTimerToUpdateWord();
     }
   }, [dictionary]);
+
+  useEffect(() => {
+    let minutes = Math.floor(timerToUpdateWord / 60);
+    let seconds = timerToUpdateWord % 60;   
+    
+    const minutesText = (minutes >= 0) ? minutes.toString().padStart(2, '0') : '00';
+    const secondsText = (seconds >= 0) ? seconds.toString().padStart(2, '0') : '00';
+    const timerText = `${minutesText}:${secondsText}`;
+
+    setTimeToUpdateText(timerText);
+    startTimerToUpdateWord();    
+
+    return () => clearInterval(idTimeoutUpdateWord.current!)
+  }, [timerToUpdateWord])
 
   return (
     <div className="w-full h-screen flex justify-center items-center text-3xl bg-white shadow-xl">
@@ -155,6 +192,7 @@ export const DashboardView: FC = () => {
             selectedWord={selectedWord}
             currentStateBox={currentStateBox}
             rowActived={rowActived}
+            timeToUpdateText={timeToUpdateText}
           />
         )
       }
